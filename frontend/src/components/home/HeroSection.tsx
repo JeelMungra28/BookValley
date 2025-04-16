@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
 
+import sampleBooks from "@data/sampleBooks";
 interface HeroSectionProps {
   onSearch: (query: string) => void;
 }
@@ -179,9 +180,9 @@ function StatsDisplay() {
   };
 
   const stats = [
-    { value: "10,000+", label: "Books Available" },
+    { value: `${sampleBooks.length}+`, label: "Books Available" },
     { value: "5,000+", label: "Happy Readers" },
-    { value: "500+", label: "New Titles Monthly" },
+    { value: `${Math.round(sampleBooks.length * 0.05)}+`, label: "New Titles Monthly" },
     { value: "4.8/5", label: "Customer Rating" },
   ];
 

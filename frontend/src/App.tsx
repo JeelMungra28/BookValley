@@ -9,7 +9,7 @@ import LoginPage from "./pages/login"
 import RegisterPage from "./pages/register"
 // import DashboardPage from "./pages/dashboard"
 // import CheckoutPage from "./pages/checkout"
-// import CategoriesPage from "./pages/categories"
+import CategoriesPage from "./pages/categories"
 // import AboutPage from "./components/home/about"
 import ContactPage from "./components/home/contact"
 import NotFound from "./pages/NotFound"
@@ -28,7 +28,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
           {/* <Route path="/checkout" element={<CheckoutPage />} /> */}
-          {/* <Route path="/categories" element={<CategoriesPage />} /> */}
+          <Route path="/categories" element={<CategoriesPage />} />
           {/* <Route path="/about" element={<AboutPage />} /> */}
           <Route path="/contact" element={<ContactPage />} />
           {/* <Route path="/cart" element={<CartPage />} /> */}

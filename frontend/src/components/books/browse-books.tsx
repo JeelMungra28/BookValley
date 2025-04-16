@@ -1,319 +1,505 @@
-"use client"
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { BookCard } from "@components/books/book-card";
+import { Button } from "@components/ui/button";
+import { Input } from "@components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
+import { Slider } from "@components/ui/slider";
+import { Switch } from "@components/ui/switch";
+import { Label } from "@components/ui/label";
+import { Separator } from "@components/ui/separator";
+import { Book, SYSTEM_INFO } from "../../types/Book";
+import { Search, SlidersHorizontal, X, Grid2X2, List, UserCircle, CalendarDays } from "lucide-react";
+import { ScrollArea } from "@components/ui/scroll-area";
+import { Badge } from "@components/ui/badge";
 
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { Input } from "@components/ui/input"
-import { Button } from "@components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@components/ui/pagination"
-import { Slider } from "@components/ui/slider"
-import { Checkbox } from "@components/ui/checkbox"
-import { Label } from "@components/ui/label"
-import { Search, SlidersHorizontal } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import sampleBooks from "@data/sampleBooks"
 
-// Sample books data
-const booksData = Array(20)
-  .fill(null)
-  .map((_, index) => ({
-    id: `book-${index + 1}`,
-    title: `Book Title ${index + 1}`,
-    author: `Author ${index + 1}`,
-    coverImage: `/placeholder.svg?height=400&width=300`,
-    rating: (Math.random() * 2 + 3).toFixed(1),
-    price: (Math.random() * 10 + 2).toFixed(2),
-    available: Math.random() > 0.2,
-    genre: ["Fiction", "Non-Fiction", "Science", "History", "Biography", "Fantasy"][Math.floor(Math.random() * 6)],
-  }))
+const categories = [
+  "All Categories", "Fiction", "Non-Fiction", "Self-Help", "Thriller",
+  "Mystery", "Biography", "History", "Science", "Fantasy"
+];
 
-export default function BooksPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [priceRange, setPriceRange] = useState([0, 15])
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null)
-  const [availableOnly, setAvailableOnly] = useState(false)
-  const [sortBy, setSortBy] = useState("relevance")
-  const [showFilters, setShowFilters] = useState(false)
+export default function BrowseBooksPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [books, setBooks] = useState<Book[]>(sampleBooks);
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>(sampleBooks);
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "All Categories");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [sortBy, setSortBy] = useState("relevance");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [inStock, setInStock] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // Filter books based on search query, price range, genre, and availability
-  const filteredBooks = booksData.filter((book) => {
-    const matchesSearch =
-      book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesPrice =
-      Number.parseFloat(book.price) >= priceRange[0] && Number.parseFloat(book.price) <= priceRange[1]
-    const matchesGenre = selectedGenre ? book.genre === selectedGenre : true
-    const matchesAvailability = availableOnly ? book.available : true
+  // Apply filters
+  useEffect(() => {
+    let result = [...books];
 
-    return matchesSearch && matchesPrice && matchesGenre && matchesAvailability
-  })
-
-  // Sort books based on selected sort option
-  const sortedBooks = [...filteredBooks].sort((a, b) => {
-    switch (sortBy) {
-      case "price-low":
-        return Number.parseFloat(a.price) - Number.parseFloat(b.price)
-      case "price-high":
-        return Number.parseFloat(b.price) - Number.parseFloat(a.price)
-      case "rating":
-        return Number.parseFloat(b.rating) - Number.parseFloat(a.rating)
-      default:
-        return 0
+    // Search filter
+    if (searchTerm) {
+      result = result.filter(book =>
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
-  })
+
+    // Category filter
+    if (selectedCategory && selectedCategory !== "All Categories") {
+      result = result.filter(book => book.category === selectedCategory);
+    }
+
+    // Price filter
+    result = result.filter(book =>
+      book.price >= priceRange[0] && book.price <= priceRange[1]
+    );
+
+    // In Stock filter - add this condition
+    if (inStock) {
+      result = result.filter(book => book.available);
+    }
+
+    // Sort
+    if (sortBy === "price-low") {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortBy === "price-high") {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortBy === "newest") {
+      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+
+    setFilteredBooks(result);
+
+    // Update search params
+    const params = new URLSearchParams();
+    if (searchTerm) params.set("search", searchTerm);
+    if (selectedCategory !== "All Categories") params.set("category", selectedCategory);
+    setSearchParams(params);
+  }, [searchTerm, selectedCategory, priceRange, inStock, sortBy, books, setSearchParams]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("All Categories");
+    setPriceRange([0, 1000]);
+    setSortBy("relevance");
+    setInStock(false);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    }
+  };
+
+  // Format the date in a more readable format
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-        {/* Mobile filter toggle */}
-        <div className="w-full md:hidden mb-4">
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-between"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <span className="flex items-center gap-2">
-              <SlidersHorizontal size={18} />
-              Filters
-            </span>
-            <span>{showFilters ? "Hide" : "Show"}</span>
-          </Button>
-        </div>
-
-        {/* Filters sidebar */}
-        <AnimatePresence>
-          {(showFilters || window.innerWidth >= 768) && (
-            <motion.aside
-              className="w-full md:w-1/4 md:sticky md:top-24 space-y-6 bg-white dark:bg-slate-950 p-4 rounded-lg border"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div>
-                <h3 className="font-semibold mb-3">Price Range</h3>
-                <div className="px-2">
-                  <Slider defaultValue={[0, 15]} max={15} step={0.5} value={priceRange} onValueChange={setPriceRange} />
-                  <div className="flex justify-between mt-2 text-sm">
-                    <span>${priceRange[0]}</span>
-                    <span>${priceRange[1]}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-3">Genre</h3>
-                <Select onValueChange={(value) => setSelectedGenre(value === "all" ? null : value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Genres" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Genres</SelectItem>
-                    <SelectItem value="Fiction">Fiction</SelectItem>
-                    <SelectItem value="Non-Fiction">Non-Fiction</SelectItem>
-                    <SelectItem value="Science">Science</SelectItem>
-                    <SelectItem value="History">History</SelectItem>
-                    <SelectItem value="Biography">Biography</SelectItem>
-                    <SelectItem value="Fantasy">Fantasy</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-3">Availability</h3>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="available"
-                    checked={availableOnly}
-                    onCheckedChange={(checked) => setAvailableOnly(checked as boolean)}
-                  />
-                  <Label htmlFor="available">Show available books only</Label>
-                </div>
-              </div>
-
-              <div className="pt-4 md:hidden">
-                <Button className="w-full" onClick={() => setShowFilters(false)}>
-                  Apply Filters
-                </Button>
-              </div>
-            </motion.aside>
-          )}
-        </AnimatePresence>
-
-        {/* Main content */}
-        <div className="w-full md:w-3/4 space-y-6">
-          {/* Search and sort */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
-              <Input
-                placeholder="Search by title or author..."
-                className="pl-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="relevance">Relevance</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Rating</SelectItem>
-              </SelectContent>
-            </Select>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-8"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Browse Books</h1>
+            <p className="text-muted-foreground">Discover your next favorite read from our collection</p>
           </div>
 
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-2 px-4 rounded-lg">
+            <UserCircle className="h-4 w-4" />
+            <span>Welcome, {SYSTEM_INFO.currentUser}</span>
+          </div>
+        </div>
+
+        {/* Date and time information */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <CalendarDays className="h-4 w-4" />
+          <span>Last updated: {formatDate(SYSTEM_INFO.currentDate)}</span>
+        </div>
+      </motion.div>
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Filter sidebar - desktop */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="hidden lg:block w-64 flex-shrink-0"
+        >
+          <div className="sticky top-24 bg-card border rounded-xl p-5 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-semibold">Filters</h2>
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="h-8 text-xs">
+                Clear All
+              </Button>
+            </div>
+
+            {/* Category filter */}
+            <div className="mb-6">
+              <h3 className="font-medium text-sm mb-3">Category</h3>
+              <ScrollArea className="h-48">
+                <div className="space-y-2">
+                  {categories.map((category) => (
+                    <div key={category} className="flex items-center">
+                      <input
+                        type="radio"
+                        id={`category-${category}`}
+                        name="category"
+                        className="mr-2"
+                        checked={selectedCategory === category}
+                        onChange={() => setSelectedCategory(category)}
+                      />
+                      <Label
+                        htmlFor={`category-${category}`}
+                        className={`text-sm cursor-pointer ${selectedCategory === category ? "font-medium" : ""}`}
+                      >
+                        {category}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+
+            <Separator className="my-6" />
+
+            {/* Price filter */}
+            <div className="mb-6">
+              <h3 className="font-medium text-sm mb-4">Price Range</h3>
+              <Slider
+                defaultValue={[priceRange[0], priceRange[1]]}
+                min={0}
+                max={1000}
+                step={10}
+                value={[priceRange[0], priceRange[1]]}
+                onValueChange={(values) => setPriceRange([values[0], values[1]])}
+                className="my-6"
+              />
+              <div className="flex items-center justify-between">
+                <div className="bg-muted px-2 py-1 rounded-md text-xs">₹{priceRange[0]}</div>
+                <div className="bg-muted px-2 py-1 rounded-md text-xs">₹{priceRange[1]}</div>
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+
+            {/* Additional filters */}
+            <div className="mb-6">
+              <h3 className="font-medium text-sm mb-3">Availability</h3>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="in-stock"
+                  checked={inStock}
+                  onCheckedChange={setInStock}
+                />
+                <Label htmlFor="in-stock" className="text-sm">In Stock Only</Label>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Main content */}
+        <div className="flex-1">
+          {/* Search and controls */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4 mb-6 items-center justify-between"
+          >
+            <div className="w-full sm:max-w-md relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                type="search"
+                placeholder="Search books, authors..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance">Relevance</SelectItem>
+                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div className="flex items-center border rounded-md">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="icon"
+                  className="h-10 w-10 rounded-r-none"
+                  onClick={() => setViewMode("grid")}
+                >
+                  <Grid2X2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="icon"
+                  className="h-10 w-10 rounded-l-none"
+                  onClick={() => setViewMode("list")}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <Button
+                variant="outline"
+                size="icon"
+                className="lg:hidden h-10 w-10"
+                onClick={() => setIsFilterOpen(true)}
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Active filters */}
+          {(searchTerm || selectedCategory !== "All Categories" || priceRange[0] > 0 || priceRange[1] < 1000) && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-6 flex flex-wrap items-center gap-2"
+            >
+              <span className="text-sm text-muted-foreground">Active filters:</span>
+
+              {searchTerm && (
+                <Badge variant="secondary" className="flex items-center gap-1 pl-3">
+                  Search: {searchTerm}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 p-0 ml-1"
+                    onClick={() => setSearchTerm("")}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              )}
+
+              {selectedCategory !== "All Categories" && (
+                <Badge variant="secondary" className="flex items-center gap-1 pl-3">
+                  Category: {selectedCategory}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 p-0 ml-1"
+                    onClick={() => setSelectedCategory("All Categories")}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              )}
+
+              {(priceRange[0] > 0 || priceRange[1] < 1000) && (
+                <Badge variant="secondary" className="flex items-center gap-1 pl-3">
+                  Price: ₹{priceRange[0]} - ₹{priceRange[1]}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 p-0 ml-1"
+                    onClick={() => setPriceRange([0, 1000])}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              )}
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={clearFilters}
+              >
+                Clear All
+              </Button>
+            </motion.div>
+          )}
+
           {/* Results count */}
-          <div>
-            <p className="text-muted-foreground">
-              Showing {sortedBooks.length} of {booksData.length} books
-            </p>
+          <div className="mb-5 text-sm text-muted-foreground">
+            Showing {filteredBooks.length} results
           </div>
 
           {/* Books grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedBooks.map((book) => (
-              <BookCard key={book.id} book={book} />
-            ))}
-          </div>
+          {filteredBooks.length > 0 ? (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                  : "flex flex-col gap-4"
+              }
+            >
+              {filteredBooks.map((book) => (
+                <motion.div key={book._id} variants={itemVariants}>
+                  <BookCard book={book} variant={viewMode === "grid" ? "grid" : "default"} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-20 text-center"
+            >
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Search className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">No books found</h3>
+              <p className="text-muted-foreground max-w-md mb-6">
+                We couldn't find any books that match your search criteria. Try adjusting your filters or search term.
+              </p>
+              <Button onClick={clearFilters}>Clear All Filters</Button>
+            </motion.div>
+          )}
+        </div>
+      </div>
 
-          {/* Empty state */}
-          {sortedBooks.length === 0 && (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold mb-2">No books found</h3>
-              <p className="text-muted-foreground mb-6">Try adjusting your search or filter criteria</p>
-              <Button
-                onClick={() => {
-                  setSearchQuery("")
-                  setPriceRange([0, 15])
-                  setSelectedGenre(null)
-                  setAvailableOnly(false)
-                }}
-              >
-                Reset Filters
+      {/* Mobile filter drawer */}
+      {isFilterOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 lg:hidden"
+          onClick={() => setIsFilterOpen(false)}
+        >
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "spring", damping: 25 }}
+            onClick={(e) => e.stopPropagation()}
+            className="fixed left-0 top-0 h-full w-[85%] max-w-[350px] bg-background border-r shadow-lg p-6 overflow-y-auto"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold">Filters</h2>
+              <Button variant="ghost" size="icon" onClick={() => setIsFilterOpen(false)}>
+                <X className="h-5 w-5" />
               </Button>
             </div>
-          )}
 
-          {/* Pagination */}
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" size={undefined} />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink size="icon"> </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink size="icon">0</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink size="icon"></PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" size={undefined} />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      </div>
+            {/* User info in mobile drawer */}
+            <div className="mb-6 p-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-2 text-sm">
+                <UserCircle className="h-5 w-5" />
+                <span className="font-medium">{SYSTEM_INFO.currentUser}</span>
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {formatDate(SYSTEM_INFO.currentDate)}
+              </div>
+            </div>
+
+            {/* Mobile filters - same as desktop but in drawer */}
+            <div className="mb-6">
+              <h3 className="font-medium text-sm mb-3">Category</h3>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {categories.map((category) => (
+                  <div key={category} className="flex items-center">
+                    <input
+                      type="radio"
+                      id={`mobile-category-${category}`}
+                      name="mobile-category"
+                      className="mr-2"
+                      checked={selectedCategory === category}
+                      onChange={() => setSelectedCategory(category)}
+                    />
+                    <Label
+                      htmlFor={`mobile-category-${category}`}
+                      className={`text-sm cursor-pointer ${selectedCategory === category ? "font-medium" : ""}`}
+                    >
+                      {category}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+
+            <div className="mb-6">
+              <h3 className="font-medium text-sm mb-4">Price Range</h3>
+              <Slider
+                defaultValue={[priceRange[0], priceRange[1]]}
+                min={0}
+                max={1000}
+                step={10}
+                value={[priceRange[0], priceRange[1]]}
+                onValueChange={(values) => setPriceRange([values[0], values[1]])}
+                className="my-6"
+              />
+              <div className="flex items-center justify-between">
+                <div className="bg-muted px-2 py-1 rounded-md text-xs">₹{priceRange[0]}</div>
+                <div className="bg-muted px-2 py-1 rounded-md text-xs">₹{priceRange[1]}</div>
+              </div>
+            </div>
+
+            <Separator className="my-6" />
+
+            <div className="mb-6">
+              <h3 className="font-medium text-sm mb-3">Availability</h3>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="mobile-in-stock"
+                  checked={inStock}
+                  onCheckedChange={setInStock}
+                />
+                <Label htmlFor="mobile-in-stock" className="text-sm">In Stock Only</Label>
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 pt-6 pb-2 bg-background">
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" onClick={clearFilters}>
+                  Clear All
+                </Button>
+                <Button onClick={() => setIsFilterOpen(false)}>
+                  Apply Filters
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
-  )
-}
-
-// Book Card Component
-function BookCard({ book }: { book: any }) {
-  return (
-    <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-      <div className="overflow-hidden h-full flex flex-col border rounded-lg shadow-sm">
-        <div className="relative pt-[140%] overflow-hidden">
-          <img
-            src={book.coverImage || "/placeholder.svg"}
-            alt={book.title}
-            className="absolute inset-0 w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-          />
-          {book.available === false && (
-            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-              <span className="bg-background/80 text-foreground px-2 py-1 rounded-md text-sm">
-                Currently Unavailable
-              </span>
-            </div>
-          )}
-        </div>
-        <div className="p-4 flex-grow">
-          <h3 className="font-semibold truncate">{book.title}</h3>
-          <p className="text-sm text-muted-foreground">{book.author}</p>
-          <div className="flex items-center mt-2">
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className={`w-4 h-4 ${i < Math.floor(book.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                    }`}
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                </svg>
-              ))}
-            </div>
-            <span className="ml-1 text-xs">{book.rating}</span>
-          </div>
-          <div className="mt-2 flex items-center">
-            <svg
-              className="w-3 h-3 mr-1 text-muted-foreground"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            <span className="text-sm font-medium">${book.price}/week</span>
-          </div>
-        </div>
-        <div className="p-4 pt-0 mt-auto">
-          <div className="flex gap-2 w-full">
-            <Button asChild className="flex-1">
-              <Link to={`/books/${book.id}`}>View</Link>
-            </Button>
-            <Button variant="outline" size="icon" disabled={book.available === false}>
-              <svg
-                className="w-4 h-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="9" cy="21" r="1" />
-                <circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-              </svg>
-              <span className="sr-only">Add to cart</span>
-            </Button>
-          </div>
-        </div>
-      </div>
-    </motion.div>
   )
 }
