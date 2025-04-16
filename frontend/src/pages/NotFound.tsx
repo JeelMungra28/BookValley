@@ -1,19 +1,27 @@
-import { Button } from "@components/ui/button";
+import React from "react";
+import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 
-const NotFoundPage = () => {
+const NotFound = () => {
     return (
-        <div className="container flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] py-12 text-center">
-            <h1 className="text-6xl font-bold mb-4">404</h1>
-            <h2 className="text-2xl font-semibold mb-4">Page Not Found</h2>
-            <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md">
-                The page you are looking for doesn't exist or has been moved.
-            </p>
-            <Button asChild>
-                <Link to="/">Return to Home</Link>
-            </Button>
+        <div className="flex items-center flex-col justify-center lg:flex-row py-28 px-6 md:px-24 md:py-20 lg:py-32 gap-16 lg:gap-28">
+            <div className="w-full lg:w-1/2">
+                <img className="hidden lg:block" src="https://i.ibb.co/v30JLYr/Group-192-2.png" alt="" />
+                <img className="hidden md:block lg:hidden" src="https://i.ibb.co/c1ggfn2/Group-193.png" alt="" />
+                <img className="md:hidden" src="https://i.ibb.co/8gTVH2Y/Group-198.png" alt="" />
+            </div>
+            <div className="w-full lg:w-1/2">
+                <h1 className="py-4 text-3xl lg:text-4xl font-extrabold text-gray-800 dark:text-white">Looks like you've found the doorway to the great nothing</h1>
+                <p className="py-4 text-base text-gray-800 dark:text-gray-200">The content you're looking for doesn't exist. Either it was removed, or you mistyped the link.</p>
+                <p className="py-2 text-base text-gray-800 dark:text-gray-200">Sorry about that! Please visit our hompage to get where you need to go.</p>
+                <Button asChild className="w-full lg:w-auto my-4 px-1 sm:px-16 py-8">
+                    <Link to="/">
+                        Go back to Homepage
+                    </Link>
+                </Button>
+            </div>
         </div>
     );
 };
 
-export default NotFoundPage;
+export default NotFound;
