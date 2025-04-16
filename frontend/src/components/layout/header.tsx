@@ -118,20 +118,13 @@ export default function Header() {
     >
       <div className="container mx-auto px-6">
         <div className="flex h-[4.5rem] md:h-20 items-center justify-between">
-          {/* Logo with animation */}
+          {/* Text only for BookValley - Logo removed */}
           <motion.div
             variants={logoVariants}
             whileHover={{ scale: 1.05 }}
           >
             <Link to="/" className="flex items-center space-x-3 group">
-              <motion.img
-                src="/placeholder-logo.svg"
-                alt="BookValley Logo"
-                width={44}
-                height={44}
-                className="transition-transform duration-300 group-hover:rotate-12"
-              />
-              <span className="font-bold text-2xl md:text-3xl font-serif tracking-wide hidden sm:inline-block relative">
+              <span className="font-bold text-2xl md:text-3xl font-serif tracking-wide relative">
                 BookValley
                 <motion.span
                   className="absolute -bottom-1 left-0 w-0 h-[3px] bg-primary group-hover:w-full transition-all duration-300"
@@ -174,7 +167,8 @@ export default function Header() {
             className="flex items-center space-x-4"
           >
             {/* Static Search with expanding input */}
-            <div className="hidden sm:flex h-10 items-center relative min-w-[40px] rounded-full border border-input bg-transparent transition-all duration-300 focus-within:border-primary/40 focus-within:ring-1 focus-within:ring-primary/30 overflow-hidden group"
+            <div
+              className="hidden sm:flex h-10 items-center relative min-w-[40px] rounded-full border border-input bg-transparent transition-all duration-300 focus-within:border-primary/40"
               style={{
                 width: searchFocused || searchValue ? '280px' : '180px'
               }}

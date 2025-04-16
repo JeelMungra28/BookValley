@@ -134,7 +134,7 @@ export default function Footer() {
 
         <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} LibrarySphere. All rights reserved.
+            &copy; {new Date().getFullYear()} LibrarySphe. All rights reserved.
           </p>
           <div className="flex space-x-6">
             <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
