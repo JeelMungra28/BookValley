@@ -2,9 +2,9 @@
 
 import { useEffect } from "react"
 import { HeroSection } from "../components/home/HeroSection"
-import { FeaturedBooks } from "../components/home/featured-books"
-import { CategorySection } from "../components/home/CategorySection"
-import { NewArrivals } from "../components/home/NewArrivals"
+// import { FeaturedBooks } from "../components/home/featured-books"
+// import { CategorySection } from "../components/home/CategorySection"
+// import { NewArrivals } from "../components/home/NewArrivals"
 import { CommunitySection } from "../components/home/CommunitySection"
 import { ScrollToTop } from "../components/layout/ScrollToTop"
 import { featuredBooks, newArrivals, categories } from "../components/data/mockBooks"
@@ -23,9 +23,9 @@ export default function HomePage() {
   return (
     <div className="w-full max-w-full overflow-hidden">
       <HeroSection onSearch={handleSearch} />
-      <FeaturedBooks books={featuredBooks} />
-      <CategorySection categories={categories} />
-      <NewArrivals books={newArrivals} />
+      {/* <FeaturedBooks books={featuredBooks} /> */}
+      {/* <CategorySection categories={categories} /> */}
+      {/* <NewArrivals books={newArrivals} /> */}
       <CommunitySection />
       <ScrollToTop />
     </div>
