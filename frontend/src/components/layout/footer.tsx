@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
-              <img src="/placeholder-logo.svg" alt="LibrarySphere Logo" width={40} height={40} className="mr-2" />
+              {/* <img src="/placeholder-logo.svg" alt="BookValley Logo" width={40} height={40} className="mr-2" /> */}
               <span className="text-xl font-bold"> BookValley </span>
             </div>
             <p className="text-muted-foreground mb-4">
@@ -134,7 +134,7 @@ export default function Footer() {
 
         <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} LibrarySphe. All rights reserved.
+            &copy; {new Date().getFullYear()} BookValley. All rights reserved.
           </p>
           <div className="flex space-x-6">
             <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { BookCard } from "../books/book-card";
-import { BookType } from "@/src/components/data/mockBooks";
+import { BookType } from "@/src/data/mockBooks";
 
 interface NewArrivalsProps {
     books: BookType[];

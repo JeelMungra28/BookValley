@@ -1,19 +1,20 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
 import { Checkbox } from "../components/ui/checkbox"
 import { toast } from "../hooks/use-toast"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import { BookOpen, User, Mail, Lock, ArrowRight, Facebook, Github, Check } from "lucide-react"
 
 export default function RegisterPage() {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,6 +22,10 @@ export default function RegisterPage() {
     confirmPassword: "",
     agreeTerms: false,
   })
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -53,7 +58,7 @@ export default function RegisterPage() {
 
       toast({
         title: "Registration successful",
-        description: "Welcome to LibrarySphere! Please check your email to verify your account.",
+        description: "Welcome to BookValley! Please check your email to verify your account.",
       })
 
       navigate("/login")
@@ -68,169 +73,367 @@ export default function RegisterPage() {
     }
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+        duration: 0.3
+      }
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.2 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 }
+    }
+  }
+
+  const buttonVariants = {
+    hover: {
+      scale: 1.02,
+      boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
+      transition: { type: "spring", stiffness: 400, damping: 10 }
+    },
+    tap: { scale: 0.98 }
+  }
+
+  // Password strength check
+  const passwordStrength = () => {
+    const password = formData.password;
+    if (!password) return 0;
+
+    let score = 0;
+    if (password.length > 6) score += 1;
+    if (password.length > 10) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+
+    return score;
+  }
+
+  const strength = passwordStrength();
+  const strengthColors = [
+    "bg-red-500", // Very weak
+    "bg-orange-500", // Weak
+    "bg-yellow-500", // Fair
+    "bg-lime-500", // Good
+    "bg-green-500", // Strong
+  ];
+
+  const strengthText = [
+    "Very weak",
+    "Weak",
+    "Fair",
+    "Good",
+    "Strong"
+  ];
+
   return (
-    <div className="container relative flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
-        <div className="absolute inset-0 bg-zinc-900">
-          <img
-            src="/placeholder.svg?height=800&width=1200"
-            alt="Authentication background"
-            className="object-cover w-full h-full opacity-20"
-          />
-        </div>
-        <div className="relative z-20 flex items-center text-lg font-medium">
-          <img src="/placeholder-logo.svg" alt="LibrarySphere Logo" width={40} height={40} className="mr-2" />
-          LibrarySphere
-        </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              "Join our community of book lovers and discover your next favorite read with personalized
-              recommendations."
-            </p>
-            <footer className="text-sm">The LibrarySphere Team</footer>
-          </blockquote>
-        </div>
-      </div>
-      <div className="p-8 lg:p-12">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-            <p className="text-sm text-muted-foreground">Enter your information to create an account</p>
-          </div>
-
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/50 py-10">
+      <AnimatePresence>
+        {mounted && (
           <motion.div
-            className="space-y-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            className="container max-w-screen-xl mx-auto px-4"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={containerVariants}
           >
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="John Doe"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="••••••••"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="agreeTerms"
-                  name="agreeTerms"
-                  checked={formData.agreeTerms}
-                  onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, agreeTerms: checked as boolean }))}
-                />
-                <Label htmlFor="agreeTerms" className="text-sm font-medium leading-none">
-                  I agree to the{" "}
-                  <Link to="/terms" className="text-primary underline underline-offset-4 hover:text-primary/90">
-                    terms of service
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="/privacy" className="text-primary underline underline-offset-4 hover:text-primary/90">
-                    privacy policy
+            <div className="flex flex-col lg:flex-row rounded-3xl overflow-hidden bg-card shadow-lg">
+              {/* Left Column - Illustration and branding */}
+              <motion.div
+                className="lg:w-1/2 relative overflow-hidden bg-primary text-primary-foreground p-10 lg:p-16"
+                variants={itemVariants}
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0, duration: 0.5 }}
+                  className="absolute inset-0 z-0"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-800 opacity-90" />
+                  <div className="absolute inset-0 bg-[url('/assets/bookpattern.svg')] opacity-10" />
+                </motion.div>
+
+                <div className="relative z-10 h-full flex flex-col">
+                  <motion.div
+                    className="flex items-center mb-10"
+                    variants={itemVariants}
+                  >
+                    <BookOpen className="h-10 w-10 mr-3" />
+                    <span className="text-3xl font-bold">BookValley</span>
+                  </motion.div>
+
+                  <motion.div
+                    className="flex-1 flex flex-col justify-center"
+                    variants={itemVariants}
+                  >
+                    <h1 className="text-4xl lg:text-5xl font-bold mb-6">Join the community</h1>
+                    <p className="text-xl opacity-90 mb-8 max-w-md">
+                      Create your account and start your journey into a world of books and stories.
+                    </p>
+                    <div className="space-y-6 max-w-md">
+                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <Check className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg">Free Reading Lists</h3>
+                          <p className="opacity-80">Create and organize your personal book collections</p>
+                        </div>
+                      </motion.div>
+
+                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <Check className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg">Join Book Discussions</h3>
+                          <p className="opacity-80">Share your thoughts with a community of book lovers</p>
+                        </div>
+                      </motion.div>
+
+                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <Check className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg">Reading Goals</h3>
+                          <p className="opacity-80">Set and track your reading goals throughout the year</p>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    className="mt-auto pt-8"
+                    variants={itemVariants}
+                  >
+                    <blockquote>
+                      <p className="text-lg font-medium italic opacity-90">
+                        "Join our community of book lovers and discover your next favorite read with personalized
+                        recommendations."
+                      </p>
+                      <footer className="mt-2 font-medium opacity-80">— The BookValley Team</footer>
+                    </blockquote>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Right Column - Register Form */}
+              <motion.div
+                className="lg:w-1/2 p-8 lg:p-16 flex flex-col justify-center"
+                variants={itemVariants}
+              >
+                <motion.div variants={itemVariants}>
+                  <h2 className="text-3xl font-bold mb-2">Create an account</h2>
+                  <p className="text-muted-foreground mb-8">Enter your information to get started</p>
+                </motion.div>
+
+                <motion.form
+                  onSubmit={handleSubmit}
+                  className="space-y-5"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <motion.div className="space-y-2" variants={itemVariants}>
+                    <Label htmlFor="name" className="text-base">Full Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                      <Input
+                        id="name"
+                        name="name"
+                        placeholder="John Doe"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="pl-10 py-6 text-base"
+                        required
+                      />
+                    </div>
+                  </motion.div>
+
+                  <motion.div className="space-y-2" variants={itemVariants}>
+                    <Label htmlFor="email" className="text-base">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="name@example.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="pl-10 py-6 text-base"
+                        required
+                      />
+                    </div>
+                  </motion.div>
+
+                  <motion.div className="space-y-2" variants={itemVariants}>
+                    <Label htmlFor="password" className="text-base">Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="pl-10 py-6 text-base"
+                        required
+                      />
+                    </div>
+                    {formData.password && (
+                      <div className="mt-2 space-y-2">
+                        <div className="flex gap-1">
+                          {[0, 1, 2, 3, 4].map((index) => (
+                            <div
+                              key={index}
+                              className={`h-1 flex-1 rounded-full ${index < strength ? strengthColors[strength] : 'bg-muted'}`}
+                            ></div>
+                          ))}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {strength > 0 ? strengthText[strength - 1] : 'Enter a password'}
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+
+                  <motion.div className="space-y-2" variants={itemVariants}>
+                    <Label htmlFor="confirmPassword" className="text-base">Confirm Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        className={`pl-10 py-6 text-base ${formData.confirmPassword &&
+                          formData.password !== formData.confirmPassword ?
+                          "border-red-500 focus-visible:ring-red-500" : ""
+                          }`}
+                        required
+                      />
+                    </div>
+                    {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                      <p className="text-sm text-red-500 mt-1">Passwords do not match</p>
+                    )}
+                  </motion.div>
+
+                  <motion.div
+                    className="flex items-start space-x-3 bg-muted/50 p-4 rounded-lg"
+                    variants={itemVariants}
+                  >
+                    <Checkbox
+                      id="agreeTerms"
+                      name="agreeTerms"
+                      checked={formData.agreeTerms}
+                      onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, agreeTerms: checked as boolean }))}
+                      className="mt-1"
+                    />
+                    <Label htmlFor="agreeTerms" className="text-sm font-medium leading-none">
+                      I agree to the{" "}
+                      <Link to="/terms" className="text-primary underline underline-offset-4 hover:text-primary/90">
+                        terms of service
+                      </Link>{" "}
+                      and{" "}
+                      <Link to="/privacy" className="text-primary underline underline-offset-4 hover:text-primary/90">
+                        privacy policy
+                      </Link>
+                    </Label>
+                  </motion.div>
+
+                  <motion.div variants={itemVariants}>
+                    <motion.button
+                      type="submit"
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-4 rounded-lg text-base font-medium flex items-center justify-center relative overflow-hidden group"
+                      disabled={isLoading}
+                      variants={buttonVariants}
+                      whileHover="hover"
+                      whileTap="tap"
+                    >
+                      <span>{isLoading ? "Creating account..." : "Create Account"}</span>
+                      <motion.div
+                        className="absolute right-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2"
+                        initial={{ opacity: 0, x: -5 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <ArrowRight className="h-5 w-5" />
+                      </motion.div>
+                    </motion.button>
+                  </motion.div>
+                </motion.form>
+
+                <motion.div
+                  className="relative my-8"
+                  variants={itemVariants}
+                >
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-3 text-muted-foreground">Or continue with</span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  className="grid grid-cols-2 gap-4"
+                  variants={itemVariants}
+                >
+                  <motion.button
+                    type="button"
+                    className="flex items-center justify-center px-4 py-3 border border-input rounded-lg text-sm font-medium hover:bg-accent"
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Facebook className="h-5 w-5 mr-2 text-blue-600" />
+                    <span>Facebook</span>
+                  </motion.button>
+
+                  <motion.button
+                    type="button"
+                    className="flex items-center justify-center px-4 py-3 border border-input rounded-lg text-sm font-medium hover:bg-accent"
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Github className="h-5 w-5 mr-2 text-gray-800 dark:text-gray-200" />
+                    <span>GitHub</span>
+                  </motion.button>
+                </motion.div>
+
+                <motion.p
+                  className="mt-8 text-center text-sm text-muted-foreground"
+                  variants={itemVariants}
+                >
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-primary font-medium hover:underline">
+                    Sign in
                   </Link>
-                </Label>
-              </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating account..." : "Create Account"}
-              </Button>
-            </form>
+                </motion.p>
+              </motion.div>
+            </div>
           </motion.div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2 h-4 w-4"
-              >
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-              </svg>
-              Facebook
-            </Button>
-            <Button variant="outline">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2 h-4 w-4"
-              >
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-              </svg>
-              GitHub
-            </Button>
-          </div>
-
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="underline underline-offset-4 hover:text-primary">
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

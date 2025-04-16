@@ -14,71 +14,7 @@ import { toast } from "../../hooks/use-toast"
 import { BookCard } from "./book-card"
 
 // Sample book data
-const book = {
-  id: "1",
-  title: "The Great Gatsby",
-  author: "F. Scott Fitzgerald",
-  coverImage: "/placeholder.svg?height=600&width=400",
-  rating: 4.5,
-  reviewCount: 128,
-  price: 5.99,
-  available: true,
-  genre: "Fiction",
-  publishedDate: "1925",
-  pages: 218,
-  language: "English",
-  isbn: "9780743273565",
-  description: `The Great Gatsby is a 1925 novel by American writer F. Scott Fitzgerald. Set in the Jazz Age on Long Island, near New York City, the novel depicts first-person narrator Nick Carraway's interactions with mysterious millionaire Jay Gatsby and Gatsby's obsession to reunite with his former lover, Daisy Buchanan.
-  
-  The novel was inspired by a youthful romance Fitzgerald had with socialite Ginevra King, and the riotous parties he attended on Long Island's North Shore in 1922. Following a move to the French Riviera, Fitzgerald completed a rough draft of the novel in 1924. He submitted it to editor Maxwell Perkins, who persuaded Fitzgerald to revise the work over the following winter. After making revisions, Fitzgerald was satisfied with the text, but remained ambivalent about the book's title and considered several alternatives.`,
-  reviews: [
-    {
-      id: "r1",
-      user: "John Doe",
-      avatar: "/placeholder-user.jpg",
-      rating: 5,
-      date: "2023-10-15",
-      comment: "A masterpiece of American literature. Fitzgerald's prose is elegant and evocative.",
-    },
-    {
-      id: "r2",
-      user: "Jane Smith",
-      avatar: "/placeholder-user.jpg",
-      rating: 4,
-      date: "2023-09-22",
-      comment: "Beautifully written, though I found some parts to be slow. Still a classic worth reading.",
-    },
-  ],
-  relatedBooks: [
-    {
-      id: "2",
-      title: "To Kill a Mockingbird",
-      author: "Harper Lee",
-      coverImage: "/placeholder.svg?height=400&width=300",
-      rating: 4.8,
-      price: 6.99,
-      available: true,
-    },
-    {
-      id: "3",
-      title: "1984",
-      author: "George Orwell",
-      coverImage: "/placeholder.svg?height=400&width=300",
-      rating: 4.6,
-      price: 4.99,
-      available: false,
-    },
-    {
-      id: "4",
-      title: "The Catcher in the Rye",
-      author: "J.D. Salinger",
-      coverImage: "/placeholder.svg?height=400&width=300",
-      rating: 4.3,
-      price: 5.49,
-      available: true,
-    },
-  ],
-}
+import { book } from "@data/book"
 
 export default function BookDetailPage() {
   const { id } = useParams()

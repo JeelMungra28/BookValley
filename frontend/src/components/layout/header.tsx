@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import {
@@ -29,6 +29,11 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const navigate = useNavigate();
+  // For demo purposes, this would be connected to your state management
+  // Just a visual demo - in real app replace with actual auth state
+  const isLoggedIn = false // Set to false to show login/register buttons
 
   // Navigation links
   const navLinks = [
@@ -234,63 +239,15 @@ export default function Header() {
               </Button>
             </motion.div>
 
-            {/* User Menu with animation - fixed flickering */}
-            <DropdownMenu open={isUserMenuOpen} onOpenChange={setIsUserMenuOpen}>
-              <DropdownMenuTrigger asChild>
-                <motion.div
-                  whileHover="hover"
-                  whileTap="tap"
-                  variants={iconVariants}
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hidden sm:flex h-11 w-11 hover:bg-primary/10 rounded-full"
-                  >
-                    <User className="h-5 w-5" />
-                    <span className="sr-only">User menu</span>
-                  </Button>
-                </motion.div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-60 overflow-hidden" sideOffset={8}>
-                <div className="py-1.5">
-                  <DropdownMenuLabel className="text-lg font-medium px-3 py-2">My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <div className="space-y-0.5 py-1">
-                    <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                      <Link to="/dashboard" className="w-full">
-                        Dashboard
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                      <Link to="/dashboard?tab=reading" className="flex items-center w-full">
-                        <BookOpen className="mr-2.5 h-[18px] w-[18px]" />
-                        My Books
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                      <Link to="/dashboard?tab=wishlist" className="flex items-center w-full">
-                        <Heart className="mr-2.5 h-[18px] w-[18px]" />
-                        Wishlist
-                      </Link>
-                    </DropdownMenuItem>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <div className="space-y-0.5 py-1">
-                    <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                      <Link to="/settings" className="w-full">
-                        Settings
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer hover:bg-destructive/10 focus:bg-destructive/10 text-base px-3 py-2.5 text-destructive rounded-md mx-1">
-                      <Link to="/logout" className="w-full">
-                        Logout
-                      </Link>
-                    </DropdownMenuItem>
-                  </div>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Login/Register buttons - always visible */}
+            <div className="hidden md:flex items-center space-x-2">
+              <Button variant="ghost" asChild className="h-10 px-4 text-base">
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button variant="default" asChild className="h-10 px-4 text-base">
+                <Link to="/register">Register</Link>
+              </Button>
+            </div>
 
             {/* Mobile Menu with animation */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -341,12 +298,7 @@ export default function Header() {
                       </Link>
                     ))}
                     <Separator className="my-3" />
-                    <Link
-                      to="/dashboard"
-                      className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
-                    >
-                      Dashboard
-                    </Link>
+
                     <Link
                       to="/cart"
                       className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
@@ -367,7 +319,7 @@ export default function Header() {
                     </Link>
                     <Link
                       to="/register"
-                      className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
+                      className="text-lg font-medium bg-primary text-primary-foreground transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center justify-center hover:bg-primary/90"
                     >
                       Register
                     </Link>

@@ -3,8 +3,8 @@ import { Toaster } from "./components/ui/toaster"
 import Header from "./components/layout/header"
 import Footer from "./components/layout/footer"
 import HomePage from "./pages/home"
-// import BooksPage from "./components/books/browse-books"
-// import BookDetailPage from "./components/books/book-detail"
+import BooksPage from "./components/books/browse-books"
+import BookDetailPage from "./components/books/book-detail"
 import LoginPage from "./pages/login"
 import RegisterPage from "./pages/register"
 // import DashboardPage from "./pages/dashboard"
@@ -22,8 +22,8 @@ function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          {/* <Route path="/books" element={<BooksPage />} /> */}
-          {/* <Route path="/books/:id" element={<BookDetailPage />} /> */}
+          <Route path="/books" element={<BooksPage />} />
+          <Route path="/books/:id" element={<BookDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           {/* <Route path="/dashboard" element={<DashboardPage />} /> */}

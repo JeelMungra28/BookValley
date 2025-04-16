@@ -7,7 +7,7 @@ import { HeroSection } from "../components/home/HeroSection"
 // import { NewArrivals } from "../components/home/NewArrivals"
 import { CommunitySection } from "../components/home/CommunitySection"
 import { ScrollToTop } from "../components/layout/ScrollToTop"
-import { featuredBooks, newArrivals, categories } from "../components/data/mockBooks"
+import { featuredBooks, newArrivals, categories } from "../data/mockBooks"
 
 export default function HomePage() {
   // Set isVisible when component mounts (used for initial animations)
