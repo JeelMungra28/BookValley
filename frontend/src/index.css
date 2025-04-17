@@ -22,7 +22,8 @@
     --muted: 210 20% 94%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 25 95% 50%;
+    /* Updated accent color - Softer Blue-Purple with reduced intensity */
+    --accent: 250 50% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -61,7 +62,8 @@
     --muted: 220 15% 20%;
     --muted-foreground: 210 10% 70%;
 
-    --accent: 25 95% 55%;
+    /* Updated accent color - Softer Blue-Purple */
+    --accent: 250 70% 65%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 70% 50%;
@@ -141,4 +143,73 @@
 
 .prose blockquote {
   @apply border-l-4 border-muted pl-4 italic my-4;
+}
+
+/* Refined gradient animation for accent elements */
+@keyframes subtle-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.btn-accent-gradient,
+.accent-gradient {
+  /* More subtle, closely related hues for light mode */
+  background: linear-gradient(
+    120deg, 
+    hsl(250, 50%, 50%), 
+    hsl(255, 55%, 53%), 
+    hsl(245, 55%, 48%)
+  );
+  background-size: 300% 300%;
+  animation: subtle-gradient-shift 8s ease infinite;
+  transition: all 0.3s ease;
+}
+
+.dark .btn-accent-gradient,
+.dark .accent-gradient {
+  /* More subtle, closely related hues for dark mode */
+  background: linear-gradient(
+    120deg, 
+    hsl(250, 70%, 60%), 
+    hsl(255, 75%, 65%), 
+    hsl(245, 70%, 58%)
+  );
+  background-size: 300% 300%;
+  animation: subtle-gradient-shift 8s ease infinite;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for accent buttons */
+button.accent:hover,
+.button.accent:hover,
+a.accent:hover {
+  filter: brightness(1.05);
+  transition: filter 0.2s ease;
+}
+
+.dark button.accent:hover,
+.dark .button.accent:hover,
+.dark a.accent:hover {
+  filter: brightness(1.1);
+  transition: filter 0.2s ease;
+}
+
+/* Enhanced hover effect for gradient buttons */
+.btn-accent-gradient:hover,
+.accent-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark .btn-accent-gradient:hover,
+.dark .accent-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }

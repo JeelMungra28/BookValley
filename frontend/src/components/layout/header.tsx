@@ -244,7 +244,7 @@ export default function Header() {
               <Button variant="ghost" asChild className="h-10 px-4 text-base">
                 <Link to="/login">Login</Link>
               </Button>
-              <Button variant="default" asChild className="h-10 px-4 text-base">
+              <Button variant="accent" asChild className="h-10 px-4 text-base">
                 <Link to="/register">Register</Link>
               </Button>
             </div>
@@ -315,7 +315,9 @@ export default function Header() {
                       to="/login"
                       className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
                     >
-                      Login
+                      <Button variant="ghost" asChild className="h-10 px-4 text-base">
+                        Login
+                      </Button>
                     </Link>
                     <Link
                       to="/register"
