@@ -1,6 +1,6 @@
 const express = require("express");
 const { authenticateUser, authorizeAdmin } = require("../Middleware/authMiddleware");
-const { DeleteUserbyID, TestUser, RegisterTestRoute, RegisterUser, LoginUser, LogoutUser, loginLimiter } = require("../Controller/user");
+const { DeleteUserbyID, TestUser, RegisterTestRoute, RegisterUser, LoginUser, LogoutUser, loginLimiter, getUserProfile } = require("../Controller/user");
 const router = express.Router();
 
 // Test route
@@ -17,6 +17,9 @@ router.post("/login", loginLimiter, LoginUser);
 
 // Logout User
 router.post("/logout", authenticateUser, LogoutUser);
+
+// Get current user profile
+router.get("/me", authenticateUser, getUserProfile);
 
 // Delete User
 router.delete("/delete/:id", authenticateUser, authorizeAdmin, DeleteUserbyID);

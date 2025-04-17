@@ -157,7 +157,7 @@ async function updateUserProfile(req, res) {
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5,                   // Maximum 5 login attempts in 15 minutes
+    max: 20,                   // Increased from 5 to 20 login attempts in 15 minutes
     message: { message: "Too many login attempts, please try again later" }
 });
 

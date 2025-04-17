@@ -10,6 +10,7 @@ import { Checkbox } from "../components/ui/checkbox"
 import { toast } from "../hooks/use-toast"
 import { motion, AnimatePresence } from "framer-motion"
 import { BookOpen, User, Mail, Lock, ArrowRight, Facebook, Github, Check } from "lucide-react"
+import { useAuth } from '../contexts/AuthContext'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -22,6 +23,8 @@ export default function RegisterPage() {
     confirmPassword: "",
     agreeTerms: false,
   })
+  const { register } = useAuth()
+  const [error, setError] = useState('')
 
   useEffect(() => {
     setMounted(true)
@@ -37,37 +40,13 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-
     try {
-      // Validate form
-      if (!formData.name || !formData.email || !formData.password) {
-        throw new Error("Please fill in all required fields")
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error("Passwords do not match")
-      }
-
-      if (!formData.agreeTerms) {
-        throw new Error("You must agree to the terms and conditions")
-      }
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      toast({
-        title: "Registration successful",
-        description: "Welcome to BookValley! Please check your email to verify your account.",
-      })
-
-      navigate("/login")
-    } catch (error) {
-      toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "Something went wrong",
-        variant: "destructive",
-      })
+      setError('')
+      setIsLoading(true)
+      await register(formData.name, formData.email, formData.password)
+      navigate('/dashboard')
+    } catch (err) {
+      setError('Failed to create an account. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -254,6 +233,11 @@ export default function RegisterPage() {
                   initial="hidden"
                   animate="visible"
                 >
+                  {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                      <span className="block sm:inline">{error}</span>
+                    </div>
+                  )}
                   <motion.div className="space-y-2" variants={itemVariants}>
                     <Label htmlFor="name" className="text-base">Full Name</Label>
                     <div className="relative">

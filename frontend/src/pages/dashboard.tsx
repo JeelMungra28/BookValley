@@ -9,6 +9,8 @@ import { Badge } from "../components/ui/badge"
 import { Progress } from "../components/ui/progress"
 import { BookOpen, Clock, BookMarked, History, Star, Calendar } from "lucide-react"
 import { motion } from "framer-motion"
+import { useAuth } from "@contexts/AuthContext"
+
 
 // Sample user data
 const userData = {
@@ -103,6 +105,7 @@ const userData = {
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState("overview")
+  const { user, logout } = useAuth()
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -119,12 +122,12 @@ export default function DashboardPage() {
               <div className="mx-auto mb-4 relative w-24 h-24">
                 <img
                   src={userData.avatar || "/placeholder.svg"}
-                  alt={userData.name}
+                  alt={user?.name || 'User'}
                   className="rounded-full object-cover w-full h-full"
                 />
               </div>
-              <CardTitle>{userData.name}</CardTitle>
-              <CardDescription>{userData.email}</CardDescription>
+              <CardTitle>{user?.name || 'User'}</CardTitle>
+              <CardDescription>{user?.email}</CardDescription>
               <div className="text-sm text-muted-foreground mt-1">Member since {userData.memberSince}</div>
             </CardHeader>
             <CardContent>

@@ -10,6 +10,7 @@ import { Checkbox } from "@components/ui/checkbox"
 import { toast } from "@hooks/use-toast"
 import { motion, AnimatePresence } from "framer-motion"
 import { BookOpen, Mail, Lock, ArrowRight, Facebook, Github } from "lucide-react"
+import { useAuth } from '../contexts/AuthContext'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -17,6 +18,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [mounted, setMounted] = useState(false)
+  const [error, setError] = useState('')
+  const { login } = useAuth()
 
   useEffect(() => {
     setMounted(true)
@@ -24,28 +27,22 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // In a real app, you would validate credentials with your backend
-      if (email && password) {
-        toast({
-          title: "Login successful",
-          description: "Welcome back to BookValley!",
-        })
-        navigate("/dashboard")
-      } else {
-        throw new Error("Please enter both email and password")
+      setError('')
+      setIsLoading(true)
+      
+      // Basic validation
+      if (!email || !password) {
+        setError('Email and password are required')
+        setIsLoading(false)
+        return
       }
-    } catch (error) {
-      toast({
-        title: "Login failed",
-        description: error instanceof Error ? error.message : "Something went wrong",
-        variant: "destructive",
-      })
+      
+      await login(email, password)
+      navigate("/dashboard")
+    } catch (err: any) {
+      console.error('Login error:', err)
+      setError(err.message || 'Failed to login. Please check your credentials.')
     } finally {
       setIsLoading(false)
     }
@@ -188,6 +185,11 @@ export default function LoginPage() {
                   initial="hidden"
                   animate="visible"
                 >
+                  {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                      <span className="block sm:inline">{error}</span>
+                    </div>
+                  )}
                   <motion.div className="space-y-2" variants={itemVariants}>
                     <Label htmlFor="email" className="text-base">Email</Label>
                     <div className="relative">
@@ -200,17 +202,13 @@ export default function LoginPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         className="pl-10 py-6 text-base"
                         required
+                        disabled={isLoading}
                       />
                     </div>
                   </motion.div>
 
                   <motion.div className="space-y-2" variants={itemVariants}>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-base">Password</Label>
-                      <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                        Forgot password?
-                      </Link>
-                    </div>
+                    <Label htmlFor="password" className="text-base">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
                       <Input
@@ -221,39 +219,39 @@ export default function LoginPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         className="pl-10 py-6 text-base"
                         required
+                        disabled={isLoading}
                       />
                     </div>
                   </motion.div>
 
-                  <motion.div
-                    className="flex items-center space-x-2"
-                    variants={itemVariants}
-                  >
-                    <Checkbox id="remember" />
-                    <Label htmlFor="remember" className="text-sm">
-                      Remember me for 30 days
-                    </Label>
+                  <motion.div className="flex items-center justify-between" variants={itemVariants}>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="remember" />
+                      <Label htmlFor="remember" className="text-sm">Remember me</Label>
+                    </div>
+                    <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                      Forgot password?
+                    </Link>
                   </motion.div>
 
                   <motion.div variants={itemVariants}>
-                    <motion.button
+                    <Button
                       type="submit"
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 py-4 rounded-lg text-base font-medium flex items-center justify-center relative overflow-hidden group"
+                      className="w-full py-6 text-base"
                       disabled={isLoading}
-                      variants={buttonVariants}
-                      whileHover="hover"
-                      whileTap="tap"
                     >
-                      <span>{isLoading ? "Signing in..." : "Sign In"}</span>
-                      <motion.div
-                        className="absolute right-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2"
-                        initial={{ opacity: 0, x: -5 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ArrowRight className="h-5 w-5" />
-                      </motion.div>
-                    </motion.button>
+                      {isLoading ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          Signing in...
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          Sign In
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </div>
+                      )}
+                    </Button>
                   </motion.div>
                 </motion.form>
 

@@ -14,10 +14,11 @@ import {
 } from "../ui/dropdown-menu"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
 import { ThemeToggle } from "../theme-toggle"
-import { Search, ShoppingCart, User, Menu, X, BookOpen, Heart } from "lucide-react"
+import { Search, ShoppingCart, User, Menu, X, BookOpen } from "lucide-react"
 import { Badge } from "../ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
 import { Separator } from "../ui/separator"
+import { useAuth } from "../../contexts/AuthContext"
 
 export default function Header() {
   const location = useLocation()
@@ -25,16 +26,13 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [searchFocused, setSearchFocused] = useState(false)
   const [searchValue, setSearchValue] = useState("")
-  const [cartCount, setCartCount] = useState(2) // Sample cart count
+  const [cartCount, setCartCount] = useState(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const { user, logout } = useAuth()
 
   const navigate = useNavigate();
-  // For demo purposes, this would be connected to your state management
-  // Just a visual demo - in real app replace with actual auth state
-  // const isLoggedIn = true // Set to false to show login/register buttons
-  const [isLoggedIn, setIsLoggedIn] = useState(true) // Track user login state
 
   // Navigation links
   const navLinks = [
@@ -218,30 +216,21 @@ export default function Header() {
               >
                 <Link to="/cart" className="relative">
                   <ShoppingCart className="h-5 w-5" />
-                  <AnimatePresence>
-                    {cartCount > 0 && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 15 }}
-                      >
-                        <Badge
-                          variant="destructive"
-                          className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold rounded-full shadow-sm"
-                        >
-                          {cartCount}
-                        </Badge>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {cartCount > 0 && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold rounded-full shadow-sm"
+                    >
+                      {cartCount}
+                    </Badge>
+                  )}
                   <span className="sr-only">Cart</span>
                 </Link>
               </Button>
             </motion.div>
 
             {/* Conditional rendering based on login state */}
-            {isLoggedIn ? (
+            {user ? (
               /* User Menu when logged in */
               <DropdownMenu open={isUserMenuOpen} onOpenChange={setIsUserMenuOpen}>
                 <DropdownMenuTrigger asChild>
@@ -262,7 +251,12 @@ export default function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-60 overflow-hidden" sideOffset={8}>
                   <div className="py-1.5">
-                    <DropdownMenuLabel className="text-lg font-medium px-3 py-2">My Account</DropdownMenuLabel>
+                    <DropdownMenuLabel className="text-lg font-medium px-3 py-2">
+                      <div className="flex flex-col">
+                        <span className="font-bold">{user?.name || 'User'}</span>
+                        <span className="text-sm text-muted-foreground">{user?.email}</span>
+                      </div>
+                    </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <div className="space-y-0.5 py-1">
                       <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
@@ -271,15 +265,9 @@ export default function Header() {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                        <Link to="/dashboard?tab=reading" className="flex items-center w-full">
-                          <BookOpen className="mr-2.5 h-[18px] w-[18px]" />
-                          My Books
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                        <Link to="/dashboard?tab=wishlist" className="flex items-center w-full">
-                          <Heart className="mr-2.5 h-[18px] w-[18px]" />
-                          Wishlist
+                        <Link to="/cart" className="flex items-center w-full">
+                          <ShoppingCart className="mr-2.5 h-[18px] w-[18px]" />
+                          Cart
                         </Link>
                       </DropdownMenuItem>
                     </div>
@@ -293,24 +281,13 @@ export default function Header() {
                       <DropdownMenuItem
                         className="cursor-pointer hover:bg-destructive/10 focus:bg-destructive/10 text-base px-3 py-2.5 text-destructive rounded-md mx-1"
                         onSelect={() => {
-                          localStorage.removeItem("auth_token");
-                          setIsLoggedIn(false);
+                          logout()
+                          navigate('/')
+                          localStorage.removeItem("auth_token")
+                          setIsUserMenuOpen(false)
                         }}
                       >
-                        {/* <Link to="/" className="w-full">
-                          Logout
-                        </Link> */}
-                        <Button
-                          variant="destructive"
-                          className="text-lg font-medium transition-all duration-200 mt-2 py-3.5 px-4 rounded-lg flex items-center justify-center w-full"
-                          onClick={() => {
-                            localStorage.removeItem("auth_token");
-                            setIsLoggedIn(false);
-                            setIsMobileMenuOpen(false);
-                          }}
-                        >
-                          Logout
-                        </Button>
+                        Logout
                       </DropdownMenuItem>
                     </div>
                   </div>
@@ -350,6 +327,12 @@ export default function Header() {
               <SheetContent side="right" className="w-[80%] sm:w-[350px] p-0">
                 <SheetHeader className="p-6 border-b">
                   <SheetTitle className="text-2xl font-serif">BookValley</SheetTitle>
+                  {user && (
+                    <div className="mt-2">
+                      <p className="font-medium">{user.name}</p>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                    </div>
+                  )}
                 </SheetHeader>
                 <div className="py-6 px-6">
                   <div className="space-y-3 mb-8">
@@ -393,7 +376,7 @@ export default function Header() {
                     </Link>
 
                     {/* Conditional mobile navigation items */}
-                    {isLoggedIn ? (
+                    {user && (
                       <>
                         <Link
                           to="/dashboard"
@@ -401,18 +384,6 @@ export default function Header() {
                         >
                           Dashboard
                         </Link>
-                        {/* <Link
-                          to="/cart"
-                          className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
-                        >
-                          <ShoppingCart className="h-5 w-5 mr-3" />
-                          Cart
-                          {cartCount > 0 && (
-                            <Badge variant="destructive" className="ml-2 rounded-full shadow-sm">
-                              {cartCount}
-                            </Badge>
-                          )}
-                        </Link> */}
                         <Link
                           to="/settings"
                           className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
@@ -423,28 +394,15 @@ export default function Header() {
                           variant="destructive"
                           className="text-lg font-medium transition-all duration-200 mt-2 py-3.5 px-4 rounded-lg flex items-center justify-center w-full"
                           onClick={() => {
+                            logout();
+                            navigate('/')
+
                             localStorage.removeItem("auth_token");
-                            setIsLoggedIn(false);
                             setIsMobileMenuOpen(false);
                           }}
                         >
                           Logout
                         </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          to="/login"
-                          className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
-                        >
-                          Login
-                        </Link>
-                        <Link
-                          to="/register"
-                          className="text-lg font-medium bg-primary text-primary-foreground transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center justify-center hover:bg-primary/90"
-                        >
-                          Register
-                        </Link>
                       </>
                     )}
                   </nav>

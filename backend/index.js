@@ -21,6 +21,7 @@ const userRoutes = require("./routes/userRoutes");
 const bookRoutes = require("./routes/bookRoutes");
 const rentalRoutes = require("./routes/rentalRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const wishlistRoutes = require("./routes/wishlistRoutes");
 
 
 app.use("/api/users", userRoutes);
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/rentals", rentalRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 // port
 const PORT = process.env.PORT || 5000;
