@@ -130,7 +130,7 @@ export default function LoginPage() {
                       Sign in to continue your reading journey and discover new stories.
                     </p>
                     <div className="space-y-6 max-w-md">
-                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                      {/* <motion.div className="flex items-start space-x-3" variants={itemVariants}>
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
                           <BookOpen className="h-5 w-5" />
                         </div>
@@ -138,9 +138,9 @@ export default function LoginPage() {
                           <h3 className="font-medium text-lg">Personalized Recommendations</h3>
                           <p className="opacity-80">Get book suggestions based on your reading history</p>
                         </div>
-                      </motion.div>
+                      </motion.div> */}
 
-                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                      {/* <motion.div className="flex items-start space-x-3" variants={itemVariants}>
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 4L12 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -150,6 +150,32 @@ export default function LoginPage() {
                         <div>
                           <h3 className="font-medium text-lg">Track Your Reading</h3>
                           <p className="opacity-80">Save your progress and pick up where you left off</p>
+                        </div>
+                      </motion.div> */}
+
+                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M19 6c0-1.105-.895-2-2-2H7c-1.105 0-2 .895-2 2v12c0 1.105.895 2 2 2h10c1.105 0 2-.895 2-2V6z" stroke="currentColor" strokeWidth="2"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg">Renting and Buying Books</h3>
+                          <p className="opacity-80">Choose between flexible rentals or permanent additions to your collection</p>
+                        </div>
+                      </motion.div>
+
+                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg">Seamlessly Browse Books</h3>
+                          <p className="opacity-80">Explore our vast library with intuitive search and filtering options</p>
                         </div>
                       </motion.div>
                     </div>

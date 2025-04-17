@@ -28,7 +28,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
           {/* <Route path="/checkout" element={<CheckoutPage />} /> */}
-          <Route path="/categories" element={<CategoriesPage />} />
+          {/* <Route path="/categories" element={<CategoriesPage />} /> */}
           {/* <Route path="/about" element={<AboutPage />} /> */}
           <Route path="/contact" element={<ContactPage />} />
           {/* <Route path="/cart" element={<CartPage />} /> */}

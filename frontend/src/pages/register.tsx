@@ -194,7 +194,7 @@ export default function RegisterPage() {
                         </div>
                       </motion.div>
 
-                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                      {/* <motion.div className="flex items-start space-x-3" variants={itemVariants}>
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
                           <Check className="h-5 w-5" />
                         </div>
@@ -202,15 +202,40 @@ export default function RegisterPage() {
                           <h3 className="font-medium text-lg">Join Book Discussions</h3>
                           <p className="opacity-80">Share your thoughts with a community of book lovers</p>
                         </div>
-                      </motion.div>
+                      </motion.div> */}
 
-                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                      {/* <motion.div className="flex items-start space-x-3" variants={itemVariants}>
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
                           <Check className="h-5 w-5" />
                         </div>
                         <div>
                           <h3 className="font-medium text-lg">Reading Goals</h3>
                           <p className="opacity-80">Set and track your reading goals throughout the year</p>
+                        </div>
+                      </motion.div> */}
+                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            <path d="M19 6c0-1.105-.895-2-2-2H7c-1.105 0-2 .895-2 2v12c0 1.105.895 2 2 2h10c1.105 0 2-.895 2-2V6z" stroke="currentColor" strokeWidth="2" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg">Renting and Buying Books</h3>
+                          <p className="opacity-80">Choose between flexible rentals or permanent additions to your collection</p>
+                        </div>
+                      </motion.div>
+
+                      <motion.div className="flex items-start space-x-3" variants={itemVariants}>
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-lg">Seamlessly Browse Books</h3>
+                          <p className="opacity-80">Explore our vast library with intuitive search and filtering options</p>
                         </div>
                       </motion.div>
                     </div>
@@ -255,7 +280,7 @@ export default function RegisterPage() {
                       <Input
                         id="name"
                         name="name"
-                        placeholder="John Doe"
+                        placeholder="Your Full Name"
                         value={formData.name}
                         onChange={handleChange}
                         className="pl-10 py-6 text-base"
@@ -272,7 +297,7 @@ export default function RegisterPage() {
                         id="email"
                         name="email"
                         type="email"
-                        placeholder="name@example.com"
+                        placeholder="example@gmail.com"
                         value={formData.email}
                         onChange={handleChange}
                         className="pl-10 py-6 text-base"

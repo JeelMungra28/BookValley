@@ -167,26 +167,26 @@ export default function ContactPage() {
                 <Mail className="h-5 w-5 mr-3 text-primary mt-0.5" />
                 <div>
                   <h3 className="font-medium">Email</h3>
-                  <p className="text-muted-foreground">support@librarysphere.com</p>
-                  <p className="text-muted-foreground">info@librarysphere.com</p>
+                  <p className="text-muted-foreground">support@bookvalley.com</p>
+                  <p className="text-muted-foreground">info@bookvalley.com</p>
                 </div>
               </div>
               <div className="flex items-start">
                 <Phone className="h-5 w-5 mr-3 text-primary mt-0.5" />
                 <div>
                   <h3 className="font-medium">Phone</h3>
-                  <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                  <p className="text-muted-foreground">1-800-555-VOHD</p>
                   <p className="text-muted-foreground">Mon-Fri, 9am-5pm EST</p>
                 </div>
               </div>
               <div className="flex items-start">
-                <MapPin className="h-5 w-5 mr-3 text-primary mt-0.5" />
+                {/* <MapPin className="h-5 w-5 mr-3 text-primary mt-0.5" />
                 <div>
                   <h3 className="font-medium">Address</h3>
                   <p className="text-muted-foreground">123 Book Street</p>
                   <p className="text-muted-foreground">New York, NY 10001</p>
                   <p className="text-muted-foreground">United States</p>
-                </div>
+                </div> */}
               </div>
               <div className="flex items-start">
                 <Clock className="h-5 w-5 mr-3 text-primary mt-0.5" />
@@ -245,13 +245,13 @@ export default function ContactPage() {
           </Card>
         </div>
       </section>
-
-      {/* Map placeholder */}
+{/* 
+      Map placeholder
       <div className="relative h-[400px] w-full rounded-lg overflow-hidden mb-12">
         <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 flex items-center justify-center">
           <p className="text-muted-foreground">Interactive map would be displayed here</p>
-        </div>
+        </div> */}
       </div>
-    </div>
+    
   )
 }
