@@ -14,6 +14,7 @@ import CategoriesPage from "./pages/categories"
 import ContactPage from "./components/home/contact"
 import NotFound from "./pages/NotFound"
 // import CartPage from "./pages/cart"
+import Headerv0 from "./components/layout/oldfiles/headerv0"
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/test" element={<Headerv0 />} />
+
           <Route path="/books" element={<BooksPage />} />
           <Route path="/books/:id" element={<BookDetailPage />} />
           <Route path="/login" element={<LoginPage />} />

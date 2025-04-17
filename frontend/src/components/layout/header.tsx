@@ -33,7 +33,8 @@ export default function Header() {
   const navigate = useNavigate();
   // For demo purposes, this would be connected to your state management
   // Just a visual demo - in real app replace with actual auth state
-  const isLoggedIn = false // Set to false to show login/register buttons
+  // const isLoggedIn = true // Set to false to show login/register buttons
+  const [isLoggedIn, setIsLoggedIn] = useState(true) // Track user login state
 
   // Navigation links
   const navLinks = [
@@ -239,15 +240,94 @@ export default function Header() {
               </Button>
             </motion.div>
 
-            {/* Login/Register buttons - always visible */}
-            <div className="hidden md:flex items-center space-x-2">
-              <Button variant="ghost" asChild className="h-10 px-4 text-base">
-                <Link to="/login">Login</Link>
-              </Button>
-              <Button variant="accent" asChild className="h-10 px-4 text-base">
-                <Link to="/register">Register</Link>
-              </Button>
-            </div>
+            {/* Conditional rendering based on login state */}
+            {isLoggedIn ? (
+              /* User Menu when logged in */
+              <DropdownMenu open={isUserMenuOpen} onOpenChange={setIsUserMenuOpen}>
+                <DropdownMenuTrigger asChild>
+                  <motion.div
+                    whileHover="hover"
+                    whileTap="tap"
+                    variants={iconVariants}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="hidden sm:flex h-11 w-11 hover:bg-primary/10 rounded-full"
+                    >
+                      <User className="h-5 w-5" />
+                      <span className="sr-only">User menu</span>
+                    </Button>
+                  </motion.div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-60 overflow-hidden" sideOffset={8}>
+                  <div className="py-1.5">
+                    <DropdownMenuLabel className="text-lg font-medium px-3 py-2">My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <div className="space-y-0.5 py-1">
+                      <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
+                        <Link to="/dashboard" className="w-full">
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
+                        <Link to="/dashboard?tab=reading" className="flex items-center w-full">
+                          <BookOpen className="mr-2.5 h-[18px] w-[18px]" />
+                          My Books
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
+                        <Link to="/dashboard?tab=wishlist" className="flex items-center w-full">
+                          <Heart className="mr-2.5 h-[18px] w-[18px]" />
+                          Wishlist
+                        </Link>
+                      </DropdownMenuItem>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <div className="space-y-0.5 py-1">
+                      <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
+                        <Link to="/settings" className="w-full">
+                          Settings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="cursor-pointer hover:bg-destructive/10 focus:bg-destructive/10 text-base px-3 py-2.5 text-destructive rounded-md mx-1"
+                        onSelect={() => {
+                          localStorage.removeItem("auth_token");
+                          setIsLoggedIn(false);
+                        }}
+                      >
+                        {/* <Link to="/" className="w-full">
+                          Logout
+                        </Link> */}
+                        <Button
+                          variant="destructive"
+                          className="text-lg font-medium transition-all duration-200 mt-2 py-3.5 px-4 rounded-lg flex items-center justify-center w-full"
+                          onClick={() => {
+                            localStorage.removeItem("auth_token");
+                            setIsLoggedIn(false);
+                            setIsMobileMenuOpen(false);
+                          }}
+                        >
+                          Logout
+                        </Button>
+                      </DropdownMenuItem>
+                    </div>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              /* Login/Register buttons when not logged in */
+              <div className="hidden sm:flex items-center space-x-2">
+                <Button variant="ghost" asChild className="h-10 px-4 text-base">
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button variant="default" asChild className="h-10 px-4 text-base">
+                  <Link to="/register">Register</Link>
+                </Button>
+              </div>
+            )}
+
 
             {/* Mobile Menu with animation */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -311,20 +391,62 @@ export default function Header() {
                         </Badge>
                       )}
                     </Link>
-                    <Link
-                      to="/login"
-                      className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
-                    >
-                      <Button variant="ghost" asChild className="h-10 px-4 text-base">
-                        Login
-                      </Button>
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="text-lg font-medium bg-primary text-primary-foreground transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center justify-center hover:bg-primary/90"
-                    >
-                      Register
-                    </Link>
+
+                    {/* Conditional mobile navigation items */}
+                    {isLoggedIn ? (
+                      <>
+                        <Link
+                          to="/dashboard"
+                          className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
+                        >
+                          Dashboard
+                        </Link>
+                        {/* <Link
+                          to="/cart"
+                          className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
+                        >
+                          <ShoppingCart className="h-5 w-5 mr-3" />
+                          Cart
+                          {cartCount > 0 && (
+                            <Badge variant="destructive" className="ml-2 rounded-full shadow-sm">
+                              {cartCount}
+                            </Badge>
+                          )}
+                        </Link> */}
+                        <Link
+                          to="/settings"
+                          className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
+                        >
+                          Settings
+                        </Link>
+                        <Button
+                          variant="destructive"
+                          className="text-lg font-medium transition-all duration-200 mt-2 py-3.5 px-4 rounded-lg flex items-center justify-center w-full"
+                          onClick={() => {
+                            localStorage.removeItem("auth_token");
+                            setIsLoggedIn(false);
+                            setIsMobileMenuOpen(false);
+                          }}
+                        >
+                          Logout
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to="/login"
+                          className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="text-lg font-medium bg-primary text-primary-foreground transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center justify-center hover:bg-primary/90"
+                        >
+                          Register
+                        </Link>
+                      </>
+                    )}
                   </nav>
                 </div>
                 <div className="mt-auto p-6 border-t">
