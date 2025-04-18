@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Book, SYSTEM_INFO } from "../../types/Book";
 import { motion } from "framer-motion";
 import { BookOpen, Heart, ShoppingCart, Clock } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { toast } from "../../hooks/use-toast";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
 
 interface BookCardProps {
   book: Book;
@@ -15,6 +17,9 @@ interface BookCardProps {
 export function BookCard({ book, variant = "default" }: BookCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlist, setIsWishlist] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { addToCart } = useCart();
 
   // Format the book's creation date
   const formatDate = (dateString: string) => {
@@ -46,13 +51,39 @@ export function BookCard({ book, variant = "default" }: BookCardProps) {
     }
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toast({
-      title: "Added to cart",
-      description: `${book.title} has been added to your cart.`,
-    });
+
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to add items to your cart.",
+        variant: "destructive",
+      });
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await addToCart({
+        id: book._id,
+        title: book.title,
+        price: book.price,
+        quantity: 1,
+        image: book.coverImage,
+      });
+      toast({
+        title: "Added to cart",
+        description: `${book.title} has been added to your cart.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
