@@ -127,7 +127,7 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <div className="relative h-[500px] md:h-[550px] lg:h-[600px] w-full">
+            {/* <div className="relative h-[500px] md:h-[550px] lg:h-[600px] w-full">
               <motion.div
                 className="absolute top-0 right-0 w-3/4 h-4/5 z-10"
                 whileHover={{ y: -5, rotate: 2 }}
@@ -150,7 +150,7 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                   className="w-full h-full object-cover rounded-lg shadow-xl"
                 />
               </motion.div>
-            </div>
+            </div> */}
           </motion.div>
         </div>
 

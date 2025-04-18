@@ -37,7 +37,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/categories" element={<CategoriesPage />} />
+              {/* <Route path="/categories" element={<CategoriesPage />} /> */}
               <Route path="/about" element={<AboutPage />} />
 
               <Route
