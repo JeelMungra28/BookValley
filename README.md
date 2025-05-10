@@ -109,6 +109,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 Project maintained by [JeelMungra28](https://github.com/JeelMungra28)
 
+
 ---
 
 **BookValley** - Discover, rent, and enjoy books with personalized recommendations

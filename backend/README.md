@@ -16,16 +16,19 @@ The backend of BookValley is a RESTful API built with Node.js and Express. It pr
 ### Installation
 
 1. Navigate to the `backend` directory:
+
    ```bash
    cd backend
    ```
 
 2. Install the dependencies:
+
    ```bash
    npm install
    ```
 
 3. Set up the environment variables by creating a `.env` file with the following:
+
    ```
    MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<db>?retryWrites=true&w=majority
    JWT_SECRET=your_jwt_secret
@@ -33,6 +36,7 @@ The backend of BookValley is a RESTful API built with Node.js and Express. It pr
    ```
 
 4. Start the server:
+
    ```bash
    npm run start
    ```
@@ -74,6 +78,7 @@ The backend of BookValley is a RESTful API built with Node.js and Express. It pr
 ## 🔧 Development
 
 1. To run the server in development mode:
+
    ```bash
    npm run dev
    ```
@@ -87,6 +92,6 @@ The backend of BookValley is a RESTful API built with Node.js and Express. It pr
 
 ## 📞 Contact
 
-For any queries, reach out to [JeelMungra28](https://github.com/JeelMungra28).
+Backend Manged By [ Rakshit Ramani ]
 
 ---

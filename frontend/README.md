@@ -82,6 +82,6 @@ The frontend of BookValley is a modern, responsive web application built with Re
 
 ## 📞 Contact
 
-For any queries, reach out to [JeelMungra28](https://github.com/JeelMungra28).
+Backend Managed By [JeelMungra28](https://github.com/JeelMungra28).
 
 ---
