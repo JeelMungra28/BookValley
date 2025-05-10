@@ -4,32 +4,31 @@ import { Link } from "react-router-dom"
 import { Button } from "../ui/button"
 import { Card, CardContent } from "../ui/card"
 import { motion } from "framer-motion"
-
 export default function AboutPage() {
   // Team members data
   const teamMembers = [
     {
-      name: "Sarah Johnson",
-      role: "Founder & CEO",
-      bio: "Sarah founded LibrarySphere with a vision to make books accessible to everyone. She has over 15 years of experience in the publishing industry.",
+      name: "Jeel P. Mungra",
+      role: "Founder & Frontend Developer",
+      bio: "Jeel founded BookValley with a vision to make books accessible to everyone. He has over 2 years of experience in the publishing industry.",
+      image: "src/assets/images/ganpat university.png",
+    },
+    {
+      name: "Rakshit R. Ramani",
+      role: "CTO & Backend Developer",
+      bio: "Rakshit leads our technology team, ensuring that our platform is fast, secure, and user-friendly.",
       image: "/placeholder-user.jpg",
     },
     {
-      name: "Michael Chen",
-      role: "CTO",
-      bio: "Michael leads our technology team, ensuring that our platform is fast, secure, and user-friendly. He has a background in computer science and AI.",
-      image: "/placeholder-user.jpg",
-    },
-    {
-      name: "Priya Patel",
+      name: "Samarth U. Delvadiya",
       role: "Head of Content",
-      bio: "Priya curates our book collection and works with publishers to bring the best titles to our platform. She has a PhD in Literature.",
+      bio: "Samarth curates our book collection and works with publishers to bring the best titles to our platform. Designing the UI/UX of the platform and documentation.",
       image: "/placeholder-user.jpg",
     },
     {
-      name: "David Wilson",
+      name: "Mehulsinh M. Chauhan",
       role: "Customer Experience Director",
-      bio: "David ensures that every customer has a seamless experience with LibrarySphere. He previously worked in customer success at major tech companies.",
+      bio: "Mehulsinh ensures that every customer has a seamless experience with BookValley. He previously worked in customer success at major tech companies.",
       image: "/placeholder-user.jpg",
     },
   ]
@@ -56,9 +55,9 @@ export default function AboutPage() {
       <section className="mb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <h1 className="text-3xl md:text-4xl font-bold mb-6">About LibrarySphere</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-6">About BookValley</h1>
             <p className="text-lg text-muted-foreground mb-6">
-              Founded in 2023, LibrarySphere is on a mission to make books accessible to everyone through an innovative
+              Founded in 2025, BookValley is on a mission to make books accessible to everyone through an innovative
               rental platform that combines technology with a passion for literature.
             </p>
             <p className="text-lg text-muted-foreground mb-6">
