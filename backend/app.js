@@ -13,20 +13,22 @@ dotenv.config();
 const app = express();
 
 // Parse allowed origins from environment variable
-const allowedOrigins = (process.env.FRONTEND_URL).split(',').map(url => url.trim());
+const allowedOrigins = process.env.FRONTEND_URL.split(",").map((url) =>
+  url.trim()
+);
 
-console.log('Allowed origins:', allowedOrigins);
+console.log("Allowed origins:", allowedOrigins);
 
 // CORS configuration
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     // Check if the origin is in our allowedOrigins list
-    const isAllowed = allowedOrigins.some(allowedOrigin => {
+    const isAllowed = allowedOrigins.some((allowedOrigin) => {
       // For devtunnel URLs, we need to check both with and without /login
-      if (allowedOrigin.includes('devtunnels.ms')) {
+      if (allowedOrigin.includes("devtunnels.ms")) {
         return origin === allowedOrigin || origin === `${allowedOrigin}/login`;
       }
       return origin === allowedOrigin;
@@ -35,9 +37,9 @@ const corsOptions = {
     if (isAllowed) {
       callback(null, true);
     } else {
-      console.log('Blocked by CORS:', origin);
-      console.log('Allowed origins:', allowedOrigins);
-      callback(new Error('Not allowed by CORS'));
+      console.log("Blocked by CORS:", origin);
+      console.log("Allowed origins:", allowedOrigins);
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
@@ -64,7 +66,7 @@ app.use(cookieParser());
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/bookvalley")
+  .connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/bookvalley")
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -97,6 +99,6 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  console.log('Environment:', process.env.NODE_ENV || 'development');
-  console.log('Frontend URLs:', process.env.FRONTEND_URL);
+  console.log("Environment:", process.env.NODE_ENV || "development");
+  console.log("Frontend URLs:", process.env.FRONTEND_URL);
 });

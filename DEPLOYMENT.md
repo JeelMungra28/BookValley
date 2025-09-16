@@ -33,8 +33,12 @@ Ensure your repository is properly structured with:
 5. Configure environment variables:
 
    - Add all variables from `backend/.env.example` with your actual values
-   - Ensure `MONGODB_URI` is set to your MongoDB Atlas connection string
+   - For `MONGODB_URI`, use your MongoDB Atlas connection string (for production) or keep the local connection `mongodb://127.0.0.1:27017/bookvalley` for development
    - Set `FRONTEND_URL` to include your Vercel frontend domain once deployed
+     - Format: `https://your-frontend-domain.vercel.app,http://localhost:5173`
+     - Include both production and development URLs separated by commas
+     - Example: `https://bookvalley-frontend.vercel.app,http://localhost:5173`
+     - This is critical for CORS to work properly between frontend and backend
 
 6. Click "Deploy"
 7. Note the deployment URL (e.g., `https://bookvalley-backend.vercel.app`)
@@ -76,7 +80,8 @@ Ensure your repository is properly structured with:
 
 - Verify that `VITE_API_URL` is correctly set in the frontend
 - Check the Network tab in browser DevTools for CORS errors
-- Ensure MongoDB Atlas IP whitelist allows connections from Vercel
+- For MongoDB Atlas: Ensure IP whitelist allows connections from Vercel
+- For local MongoDB: Use MongoDB Atlas for production deployment as Vercel can't access your local database
 
 ### Build Errors
 
@@ -85,8 +90,9 @@ Ensure your repository is properly structured with:
 
 ### Database Connection Issues
 
-- Verify the MongoDB connection string is correct
-- Ensure your MongoDB Atlas cluster is properly configured for Vercel
+- Verify the MongoDB connection string is correct (for production, use MongoDB Atlas)
+- For local development, use `mongodb://127.0.0.1:27017/bookvalley`
+- Ensure your MongoDB Atlas cluster is properly configured for Vercel in production
 
 ## Additional Resources
 
