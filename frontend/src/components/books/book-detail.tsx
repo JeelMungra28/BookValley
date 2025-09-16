@@ -91,10 +91,10 @@ export default function BookDetailPage() {
         quantity: quantity,
         image: book.coverImage,
       });
-      toast({
-        title: "Added to cart",
-        description: `${book.title} (Qty: ${quantity}) has been added to your cart.`,
-      });
+    toast({
+      title: "Added to cart",
+      description: `${book.title} (Qty: ${quantity}) has been added to your cart.`,
+    });
     } catch (error) {
       toast({
         title: "Error",
@@ -153,9 +153,9 @@ export default function BookDetailPage() {
         {/* Book cover */}
         <div className="md:col-span-1">
           <div className="relative aspect-[3/4] rounded-lg overflow-hidden shadow-lg">
-            <img
-              src={book.coverImage}
-              alt={book.title}
+              <img
+                src={book.coverImage}
+                alt={book.title}
               className="w-full h-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
@@ -167,8 +167,8 @@ export default function BookDetailPage() {
             ) : (
               <Badge className="absolute top-2 left-2 bg-red-500">Out of Stock</Badge>
             )}
-          </div>
-        </div>
+              </div>
+            </div>
 
         {/* Book details */}
         <div className="md:col-span-2">
@@ -213,29 +213,29 @@ export default function BookDetailPage() {
                 </Button>
               </div>
 
-              <Button
-                className="flex-1 h-12 gap-2"
-                onClick={handleAddToCart}
-                disabled={!book.available}
-              >
-                <ShoppingCart className="h-5 w-5" />
-                <span>Add to Cart</span>
-              </Button>
-
-              <div className="block md:hidden">
                 <Button
-                  variant={isWishlisted ? "default" : "outline"}
-                  size="icon"
-                  className={`h-12 w-12 ${isWishlisted ? 'bg-red-500 hover:bg-red-600 border-red-500' : ''}`}
-                  onClick={handleToggleWishlist}
+                  className="flex-1 h-12 gap-2"
+                  onClick={handleAddToCart}
+                disabled={!book.available}
                 >
-                  <Heart className={`h-5 w-5 ${isWishlisted ? 'text-white fill-white' : ''}`} />
+                  <ShoppingCart className="h-5 w-5" />
+                  <span>Add to Cart</span>
                 </Button>
+
+                <div className="block md:hidden">
+                  <Button
+                    variant={isWishlisted ? "default" : "outline"}
+                    size="icon"
+                    className={`h-12 w-12 ${isWishlisted ? 'bg-red-500 hover:bg-red-600 border-red-500' : ''}`}
+                    onClick={handleToggleWishlist}
+                  >
+                    <Heart className={`h-5 w-5 ${isWishlisted ? 'text-white fill-white' : ''}`} />
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Content tabs */}
+            {/* Content tabs */}
           <div className="border-t pt-6">
             <h2 className="text-xl font-semibold mb-4">Description</h2>
             <p className="text-muted-foreground mb-6">{book.description}</p>
@@ -245,13 +245,13 @@ export default function BookDetailPage() {
                 <Clock className="h-4 w-4 mr-1" />
                 <span>{getTimeSincePublication()}</span>
               </div>
-              <div className="flex items-center">
+            <div className="flex items-center">
                 <BookOpen className="h-4 w-4 mr-1" />
                 <span>Paperback</span>
               </div>
             </div>
           </div>
-        </div>
+          </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { SearchProvider } from './contexts/SearchContext';
 import Login from '@pages/login';
 import Register from '@pages/register';
 import Cart from './pages/cart';
@@ -25,43 +26,46 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/test" element={<Headerv0 />} />
-              <Route path="/books" element={<BooksPage />} />
-              <Route path="/books/:id" element={<BookDetailPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-              <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/about" element={<AboutPage />} />
+        <SearchProvider>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/test" element={<Headerv0 />} />
+                <Route path="/books" element={<BooksPage />} />
+                <Route path="/books/:id" element={<BookDetailPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                
 
-              <Route
-                path="/cart"
-                element={
-                  <PrivateRoute>
-                    <Cart />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <Dashboard />
-                  </PrivateRoute>
-                }
-              />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+                <Route
+                  path="/cart"
+                  element={
+                    <PrivateRoute>
+                      <Cart />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </SearchProvider>
       </CartProvider>
     </AuthProvider>
   )

@@ -19,6 +19,9 @@ import { Badge } from "../ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
 import { Separator } from "../ui/separator"
 import { useAuth } from "../../contexts/AuthContext"
+import { useCart } from "../../contexts/CartContext"
+import { useSearch } from "../../contexts/SearchContext"
+import { useDebounce } from "../../hooks/useDebounce"
 
 export default function Header() {
   const location = useLocation()
@@ -31,6 +34,10 @@ export default function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const { user, logout } = useAuth()
+  const { itemCount, totalPrice } = useCart()
+  const { query, setQuery, suggestions, loading, search, clearSearch } = useSearch()
+  const searchRef = useRef<HTMLDivElement>(null)
+  const debouncedSearch = useDebounce(query, 300)
 
   const navigate = useNavigate();
 
@@ -57,6 +64,23 @@ export default function Header() {
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      search(debouncedSearch);
+    }
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setSearchFocused(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Animation variants for header elements
   const logoVariants = {
@@ -109,6 +133,24 @@ export default function Header() {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query)}`);
+      setSearchFocused(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: { type: string; id: string }) => {
+    if (suggestion.type === 'book') {
+      navigate(`/books/${suggestion.id}`);
+    } else if (suggestion.type === 'category') {
+      navigate(`/categories/${suggestion.id}`);
+    }
+    setSearchFocused(false);
+    clearSearch();
   };
 
   return (
@@ -177,19 +219,21 @@ export default function Header() {
                 width: searchFocused || searchValue ? '280px' : '180px'
               }}
             >
-              <Input
-                ref={searchInputRef}
-                type="search"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                placeholder="Search books..."
-                className="h-10 w-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base pl-10"
-              />
-              <div className="absolute left-0 top-0 h-full flex items-center pl-3 text-muted-foreground">
-                <Search className="h-5 w-5" />
-              </div>
+              <form onSubmit={handleSearchSubmit} className="relative">
+                <Input
+                  ref={searchInputRef}
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  placeholder="Search books, authors, categories..."
+                  className="h-10 w-full border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base pl-10"
+                />
+                <div className="absolute left-0 top-0 h-full flex items-center pl-3 text-muted-foreground">
+                  <Search className="h-5 w-5" />
+                </div>
+              </form>
             </div>
 
             {/* Theme Toggle with animation */}
@@ -216,13 +260,20 @@ export default function Header() {
               >
                 <Link to="/cart" className="relative">
                   <ShoppingCart className="h-5 w-5" />
-                  {cartCount > 0 && (
+                  {itemCount > 0 && (
                     <Badge
                       variant="destructive"
                       className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold rounded-full shadow-sm"
                     >
-                      {cartCount}
+                      {itemCount}
                     </Badge>
+                  )}
+                  {itemCount > 0 && (
+                    <div className="absolute top-full right-0 mt-2 bg-background border rounded-lg shadow-lg p-2 text-sm">
+                      <div className="whitespace-nowrap">
+                        Total: ₹{totalPrice.toFixed(2)}
+                      </div>
+                    </div>
                   )}
                   <span className="sr-only">Cart</span>
                 </Link>
@@ -265,17 +316,16 @@ export default function Header() {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                        <Link to="/cart" className="flex items-center w-full">
-                          <ShoppingCart className="mr-2.5 h-[18px] w-[18px]" />
-                          Cart
+                        <Link to="/orders" className="flex items-center w-full">
+                          Orders
                         </Link>
                       </DropdownMenuItem>
                     </div>
                     <DropdownMenuSeparator />
                     <div className="space-y-0.5 py-1">
                       <DropdownMenuItem asChild className="cursor-pointer hover:bg-primary/10 focus:bg-primary/10 text-base px-3 py-2.5 rounded-md mx-1">
-                        <Link to="/settings" className="w-full">
-                          Settings
+                        <Link to="/wishlist" className="w-full">
+                          Wishlist
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem
@@ -304,7 +354,6 @@ export default function Header() {
                 </Button>
               </div>
             )}
-
 
             {/* Mobile Menu with animation */}
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -339,7 +388,7 @@ export default function Header() {
                     <div className="relative">
                       <Input
                         type="search"
-                        placeholder="Search books..."
+                        placeholder="Search books, authors, categories..."
                         className="rounded-full border-primary/40 focus-visible:ring-primary/60 h-11 pl-11"
                       />
                       <div className="absolute left-0 top-0 h-full flex items-center pl-4 text-muted-foreground">
@@ -368,9 +417,9 @@ export default function Header() {
                     >
                       <ShoppingCart className="h-5 w-5 mr-3" />
                       Cart
-                      {cartCount > 0 && (
+                      {itemCount > 0 && (
                         <Badge variant="destructive" className="ml-2 rounded-full shadow-sm">
-                          {cartCount}
+                          {itemCount}
                         </Badge>
                       )}
                     </Link>
@@ -385,10 +434,10 @@ export default function Header() {
                           Dashboard
                         </Link>
                         <Link
-                          to="/settings"
+                          to="/orders"
                           className="text-lg font-medium transition-all duration-200 py-3.5 px-4 rounded-lg flex items-center hover:text-primary hover:bg-primary/5"
                         >
-                          Settings
+                          Orders
                         </Link>
                         <Button
                           variant="destructive"
